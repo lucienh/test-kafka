@@ -1,5 +1,8 @@
 package io.github.lucienh.test;
 
+import io.github.lucienh.test.kafka.ConsumerMetadata;
+import io.github.lucienh.test.kafka.ProducerMetadata;
+import io.github.lucienh.test.kafka.ZookeeperConnect;
 import kafka.consumer.Consumer;
 import kafka.consumer.ConsumerConfig;
 import kafka.consumer.ConsumerIterator;
@@ -19,19 +22,38 @@ import java.util.Properties;
  */
 public class NativeConsumer {
 
-    private String topic = "test";
-
     private String group = "group";
 
-    private String zookeeper = "127.0.0.1:2181";
+
+    private ZookeeperConnect zookeeperConnect;
+
+    private ConsumerMetadata consumerMetadata;
+
+
+    public void setZookeeperConnect(ZookeeperConnect zookeeperConnect) {
+        this.zookeeperConnect = zookeeperConnect;
+    }
+
+    public NativeConsumer() {
+        zookeeperConnect = new ZookeeperConnect();
+        String topic = "test4";
+        StringDecoder stringDecoder = new StringDecoder(new VerifiableProperties());
+        consumerMetadata = new ConsumerMetadata();
+        consumerMetadata.setGroupId(group);
+        consumerMetadata.setTopic(topic);
+        consumerMetadata.setKeyDecoder(stringDecoder);
+        consumerMetadata.setValueDecoder(stringDecoder);
+        consumerMetadata.setAutoCommitInterval("1000");
+
+    }
 
     private ConsumerConnector getConsumerConnector() {
         Properties props = new Properties();
-        props.put("zookeeper.connect", zookeeper);
+        props.put("zookeeper.connect", zookeeperConnect.getZkConnect());
         props.put("group.id", group);
-        props.put("zookeeper.session.timeout.ms", "40000");
-        props.put("zookeeper.sync.time.ms", "2000");
-        props.put("auto.commit.interval.ms", "1000");
+        props.put("zookeeper.session.timeout.ms", zookeeperConnect.getZkSessionTimeout());
+        props.put("zookeeper.sync.time.ms", zookeeperConnect.getZkSyncTime());
+        props.put("auto.commit.interval.ms", consumerMetadata.getAutoCommitInterval());
 
         ConsumerConfig consumerConfig = new ConsumerConfig(props);
 
@@ -43,14 +65,13 @@ public class NativeConsumer {
 
         Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
 
-        topicCountMap.put(topic, Integer.valueOf(1));
+        topicCountMap.put(consumerMetadata.getTopic(), Integer.valueOf(1));
 
-        StringDecoder stringDecoder = new StringDecoder(new VerifiableProperties());
 
-        Map<java.lang.String, List<KafkaStream<java.lang.String, java.lang.String>>> consumerMap = consumer.createMessageStreams(topicCountMap,
-                stringDecoder, stringDecoder);
+        Map<java.lang.String, List<KafkaStream<java.lang.String, java.lang.String>>> consumerMap = consumer
+                .createMessageStreams(topicCountMap, consumerMetadata.getKeyDecoder(), consumerMetadata.getValueDecoder());
 
-        KafkaStream<java.lang.String, java.lang.String> stream = consumerMap.get(topic).get(0);
+        KafkaStream<java.lang.String, java.lang.String> stream = consumerMap.get(consumerMetadata.getTopic()).get(0);
 
         return stream.iterator();
 

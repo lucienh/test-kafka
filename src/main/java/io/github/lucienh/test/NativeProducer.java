@@ -22,15 +22,17 @@ public class NativeProducer {
 
         ProducerConfig config = new ProducerConfig(props);
 
-        Producer<String, String> producer = new Producer<String, String>(config);
+
 
         for (long nEvents = 0; nEvents < events; nEvents++) {
+            Producer<String, String> producer = new Producer<String, String>(config);
             String msg = "NativeMessage-" + rand.nextInt();
             KeyedMessage<String, String> data = new KeyedMessage<String, String>(topic, nEvents + "", msg);
-            System.out.println("Send:" + msg);
-            producer.send(data);
-        }
-        producer.close();
 
+            producer.send(data);
+            System.out.println("Send:" + msg);
+            producer.close();
+
+        }
     }
 }

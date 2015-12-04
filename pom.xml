@@ -8,7 +8,9 @@
     <artifactId>test-kafka</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
+        <spring-integration-kafka.version>1.2.0.RELEASE</spring-integration-kafka.version>
         <kafka.version>0.8.2.1</kafka.version>
+        <springframework.version>4.1.4.RELEASE</springframework.version>
     </properties>
     <dependencies>
         <dependency>
@@ -20,6 +22,27 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.10</artifactId>
             <version>${kafka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>1.7.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-kafka</artifactId>
+            <version>${spring-integration-kafka.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>
