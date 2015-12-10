@@ -36,7 +36,7 @@ public class NativeConsumer {
 
     public NativeConsumer() {
         zookeeperConnect = new ZookeeperConnect();
-        String topic = "test4";
+        String topic = "test";
         StringDecoder stringDecoder = new StringDecoder(new VerifiableProperties());
         consumerMetadata = new ConsumerMetadata();
         consumerMetadata.setGroupId(group);
