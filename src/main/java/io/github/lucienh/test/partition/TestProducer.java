@@ -10,7 +10,7 @@ public class TestProducer {
 
 
     public static void main(String[] args) {
-        long events = 50;
+        long events = 50000000;
         Random rnd = new Random();
  
         Properties props = new Properties();
